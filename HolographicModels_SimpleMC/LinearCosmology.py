@@ -23,8 +23,8 @@ class LinearCosmology(LCDMCosmology):
     def __init__(self,varyc = True,varyb = True,varya = True ):
         # Holographic parameter
         self.c_par = Parameter("c",1.0, 0.1, (0.5, 2.0), "c")
-        self.b_par = Parameter("b",0.1, 0.1, (0.0,1.5),  "b")
-        self.a_par = Parameter("a",0.8, 0.1, (0.0,1.5), "a")
+        self.b_par = Parameter("b",0.5, 0.01,(0.0,1.0),  "b")
+        self.a_par = Parameter("a",0.8, 0.01, (0.0,1.0), "a")
         self.varyc  = varyc
         self.varyb  = varyb
         self.varya  = varya 
@@ -71,10 +71,9 @@ class LinearCosmology(LCDMCosmology):
 
 
     def RHS_hde(self, Omega, z):
-        #c = 0.75
         f = self.a + self.b*z
         f_prim =  self.b
-        Q = self.c**2/(self.Om*(1+z)**3)*(self.h**2)
+        Q = self.c**2/((self.Om*(1+z)**3)*(self.h**2))
         dOmega = - (Omega*(1-Omega)/(1+z))*((2*np.sqrt(Omega)/self.c)*((Q*(1-Omega)/Omega)**((f-1)/(2*(f-2))))*(2 - f)  + 2*f -  2 + (np.log(Q*(1-Omega)/Omega)**(-(1+z)*f_prim/(f-2))) )
         return dOmega
 
@@ -86,7 +85,7 @@ class LinearCosmology(LCDMCosmology):
         Ode0 = (1 - self.Om)
         result_E = odeint(self.RHS_hde, Ode0, self.zvals)
         self.Ode = interp1d(self.zvals, result_E[:,0])
-        print(result_E[:,0])
+        #print(result_E[:,0])
         #f = self.Ode(self.z_int)
         #print('Omega_de(z=0) para cada valor usando interp1d',f[0])
         #self.Omega_hde = interp1d(self.avals, Ode[:, 0])
@@ -109,4 +108,5 @@ class LinearCosmology(LCDMCosmology):
     
 
     
+
 
